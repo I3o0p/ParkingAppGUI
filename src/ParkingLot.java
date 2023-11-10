@@ -2,23 +2,36 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-class ParkingLot {
-    private final List<Car> cars;
-    private final List<ParkingSpot> availableSpots;
-    private final int capacity;
+public class ParkingLot {
+    private List<Car> cars;
+    private List<ParkingSpot> availableSpots;
+    private int capacity;
     private int totalCarsParked;
     private double totalRevenue;
-    private final List<ParkingSpot> reservedSpots;
-    private static final int MAX_WAIT_TIME_SECONDS = 300; // Максимальное время ожидания для бронирования (в секундах)
+    private List<ParkingSpot> reservedSpots;
+    private static final int MAX_WAIT_TIME_SECONDS = 300;
 
-    private final ParkingSpot[] spots;  // Array to represent parking spots
+    private ParkingSpot[] spots;
 
     public ParkingLot(int capacity) {
         this.capacity = capacity;
         this.cars = new ArrayList<>();
         this.availableSpots = new ArrayList<>();
         this.reservedSpots = new ArrayList<>();
-        this.spots = new ParkingSpot[capacity];  // Initialize the spots array with the specified number of spots
+        this.spots = new ParkingSpot[capacity];
+
+        for (int i = 1; i <= capacity; i++) {
+            availableSpots.add(new ParkingSpot(i));
+            spots[i - 1] = availableSpots.get(i - 1);
+        }
+    }
+
+    public void updateCapacity(int newCapacity) {
+        this.capacity = newCapacity;
+        this.availableSpots.clear();
+        this.reservedSpots.clear();
+        this.cars.clear();
+        this.spots = new ParkingSpot[capacity];
 
         for (int i = 1; i <= capacity; i++) {
             availableSpots.add(new ParkingSpot(i));
@@ -81,7 +94,6 @@ class ParkingLot {
         }
 
         car.exitTime = System.currentTimeMillis() / 1000.0;
-        // Тариф за час
         double hourlyRate = 5.0;
         car.calculateParkingFee();
         car.getParkingSpot().unreserve();
@@ -151,14 +163,11 @@ class ParkingLot {
         System.out.println("Общая выручка: " + new DecimalFormat("#.#").format(getTotalRevenue()) + " грн");
     }
 
-
-
     public void resetParkingLot() {
         cars.clear();
         availableSpots.clear();
         reservedSpots.clear();
 
-        // Recreate spots and add them to available spots
         for (int i = 1; i <= capacity; i++) {
             ParkingSpot spot = new ParkingSpot(i);
             availableSpots.add(spot);
@@ -170,17 +179,12 @@ class ParkingLot {
         System.out.println("Парковка успешно обнулена.");
     }
 
-
-
     public ParkingSpot getParkingSpotByNumber(int i) {
         if (i >= 0 && i < availableSpots.size()) {
             return availableSpots.get(i);
         }
         return null;
     }
-
-
-
 
     public int getCapacity() {
         return capacity;
@@ -194,23 +198,20 @@ class ParkingLot {
         for (Car car : cars) {
             ParkingSpot parkingSpot = car.getParkingSpot();
             if (parkingSpot != null && parkingSpot.getSpotNumber() == spotNumber + 1) {
-                return true; // Если место занято, вернуть true
+                return true;
             }
         }
-        return false; // В противном случае вернуть false
+        return false;
     }
-
-
-
 
     public Car getCarBySpot(int spotNumber) {
         for (Car car : cars) {
             ParkingSpot parkingSpot = car.getParkingSpot();
             if (parkingSpot != null && parkingSpot.getSpotNumber() == spotNumber + 1) {
-                return car; // Возвращаем машину, если она припаркована на этом месте
+                return car;
             }
         }
-        return null; // Возвращаем null, если машина не найдена на данном месте
+        return null;
     }
 
     public String isSpotReserved(int spotNumber) {
@@ -221,8 +222,4 @@ class ParkingLot {
         }
         return null;
     }
-
-
-
-
 }

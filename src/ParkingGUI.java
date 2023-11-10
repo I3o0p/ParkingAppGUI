@@ -15,6 +15,9 @@ public class ParkingGUI extends JFrame {
     private ParkingLot parkingLot;
     private JTextArea outputTextArea;
 
+    private Color defaultButtonColor = Color.decode("#1b1b1b");
+    private Color hoverButtonColor = Color.decode("#2d2d2d");
+
     public ParkingGUI(ParkingLot parkingLot) {
         try {
             UIManager.setLookAndFeel(new MetalLookAndFeel());
@@ -25,17 +28,7 @@ public class ParkingGUI extends JFrame {
 
         this.parkingLot = parkingLot;
 
-        Color defaultButtonColor = Color.decode("#1b1b1b");
-        Color hoverButtonColor = Color.decode("#2d2d2d");
-
-        UIManager.put("OptionPane.background", new ColorUIResource(27, 27, 27));
-        UIManager.put("Panel.background", new ColorUIResource(27, 27, 27));
-        UIManager.put("OptionPane.messageForeground", new ColorUIResource(255, 255, 255));
-        UIManager.put("Slider.track", new ColorUIResource(27, 27, 27));
-        UIManager.put("Slider.thumb", new ColorUIResource(27, 27, 27));
-        UIManager.put("Button.background", defaultButtonColor);
-        UIManager.put("Button.foreground", Color.WHITE);
-        UIManager.put("Button.border", BorderFactory.createLineBorder(defaultButtonColor, 1));
+        setLookAndFeel();
 
         setTitle("Parking Application");
         setSize(800, 600);
@@ -54,25 +47,24 @@ public class ParkingGUI extends JFrame {
         ImageIcon resetIcon = resizeIcon("src/Images/reset.png", 30, 30);
         ImageIcon exitIcon = resizeIcon("src/Images/logout.png", 30, 30);
         ImageIcon parkview = resizeIcon("src/Images/parkview.png", 30, 30);
+
         // Create buttons with icons
-        JButton parkButton = createStyledButton("Припарковать автомобиль", parkIcon, defaultButtonColor, hoverButtonColor);
-        JButton leaveButton = createStyledButton("Покинуть парковку", leaveIcon, defaultButtonColor, hoverButtonColor);
-        JButton infoButton = createStyledButton("Информация о свободных местах", infoIcon, defaultButtonColor, hoverButtonColor);
-        JButton searchButton = createStyledButton("Поиск автомобиля", searchIcon, defaultButtonColor, hoverButtonColor);
-        JButton reserveButton = createStyledButton("Забронировать парковочное место", reserveIcon, defaultButtonColor, hoverButtonColor);
-        JButton statusButton = createStyledButton("Показать состояние парковки", statusIcon, defaultButtonColor, hoverButtonColor);
-        JButton resetButton = createStyledButton("Обнулить парковку", resetIcon, defaultButtonColor, hoverButtonColor);
-        JButton exitButton = createStyledButton("Выйти", exitIcon, defaultButtonColor, hoverButtonColor);
-        JButton parkNowButton = createStyledButton("Парковка сейчас", parkview, defaultButtonColor, hoverButtonColor);
+        JButton parkButton = createStyledButton("Припарковать автомобиль", parkIcon);
+        JButton leaveButton = createStyledButton("Покинуть парковку", leaveIcon);
+        JButton infoButton = createStyledButton("Информация о свободных местах", infoIcon);
+        JButton searchButton = createStyledButton("Поиск автомобиля", searchIcon);
+        JButton reserveButton = createStyledButton("Забронировать парковочное место", reserveIcon);
+        JButton statusButton = createStyledButton("Показать состояние парковки", statusIcon);
+        JButton resetButton = createStyledButton("Обнулить парковку", resetIcon);
+        JButton exitButton = createStyledButton("Выйти", exitIcon);
+        JButton parkNowButton = createStyledButton("Парковка сейчас", parkview);
 
-
-// Add buttons to panel
+        // Add buttons to panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
-// Add buttons with space between them
+        // Add buttons with space between them
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add initial space
-
         buttonPanel.add(parkButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
         buttonPanel.add(leaveButton);
@@ -87,9 +79,9 @@ public class ParkingGUI extends JFrame {
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
         buttonPanel.add(resetButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
-        buttonPanel.add(exitButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
         buttonPanel.add(parkNowButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
+        buttonPanel.add(exitButton);
 
         add(buttonPanel, BorderLayout.WEST);
 
@@ -100,7 +92,6 @@ public class ParkingGUI extends JFrame {
         outputTextArea.setForeground(Color.WHITE);
         outputTextArea.setBorder(BorderFactory.createEmptyBorder());
 
-
         JScrollPane scrollPane = new JScrollPane(outputTextArea);
         scrollPane.getVerticalScrollBar().setBackground(Color.decode("#1b1b1b")); // Set the background color of the vertical scrollbar
         scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
@@ -110,7 +101,6 @@ public class ParkingGUI extends JFrame {
             }
         });
 
-
         // Create output panel
         JPanel outputPanel = new JPanel(new BorderLayout());
         outputPanel.add(scrollPane, BorderLayout.CENTER);
@@ -119,7 +109,6 @@ public class ParkingGUI extends JFrame {
         messagePanel.setBackground(Color.decode("#1b1b1b"));
         messagePanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         messagePanel.add(new JLabel("Сообщения:"), BorderLayout.NORTH);
-
         messagePanel.add(outputPanel, BorderLayout.CENTER);
         add(messagePanel, BorderLayout.CENTER);
 
@@ -187,31 +176,31 @@ public class ParkingGUI extends JFrame {
             }
         });
 
-
-
         setVisible(true);
 
         getRootPane().setBackground(new Color(27, 27, 27));
         getRootPane().setForeground(Color.WHITE);
     }
 
-    private ImageIcon resizeIcon(String filePath, int width, int height) {
-        try {
-            // Use absolute file path
-            File imageFile = new File(filePath);
-            BufferedImage image = ImageIO.read(imageFile);
-            Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            return new ImageIcon(resizedImage);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private void setLookAndFeel() {
+        UIManager.put("OptionPane.background", new ColorUIResource(27, 27, 27));
+        UIManager.put("Panel.background", new ColorUIResource(27, 27, 27));
+        UIManager.put("OptionPane.messageForeground", new ColorUIResource(255, 255, 255));
+        UIManager.put("Slider.track", new ColorUIResource(27, 27, 27));
+        UIManager.put("Slider.thumb", new ColorUIResource(27, 27, 27));
+        UIManager.put("Button.background", defaultButtonColor);
+        UIManager.put("Button.foreground", Color.WHITE);
+        UIManager.put("Button.border", BorderFactory.createLineBorder(defaultButtonColor, 1));
     }
 
-
-    private JButton createStyledButton(String text, Icon icon, Color defaultColor, Color hoverColor) {
+    private JButton createStyledButton(String text, Icon icon) {
         JButton button = new JButton(text);
-        button.setBackground(defaultColor);
+        setCommonButtonProperties(button, icon);
+        return button;
+    }
+
+    private void setCommonButtonProperties(JButton button, Icon icon) {
+        button.setBackground(defaultButtonColor);
         button.setForeground(Color.WHITE);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
@@ -219,19 +208,13 @@ public class ParkingGUI extends JFrame {
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(hoverColor);
+                button.setBackground(hoverButtonColor);
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(defaultColor);
+                button.setBackground(defaultButtonColor);
             }
         });
-
-        return button;
-    }
-
-    private void appendToOutput(String message) {
-        outputTextArea.append(message + "\n\n");
     }
 
     private void handleParkButtonClick() {
@@ -329,8 +312,40 @@ public class ParkingGUI extends JFrame {
         ParkingManager parkingManager = new ParkingManager(parkingLot);
     }
 
+    private ImageIcon resizeIcon(String filePath, int width, int height) {
+        try {
+            // Use absolute file path
+            File imageFile = new File(filePath);
+            BufferedImage image = ImageIO.read(imageFile);
+            Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            return new ImageIcon(resizedImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void appendToOutput(String message) {
+        outputTextArea.append(message + "\n\n");
+    }
+
     public static void main(String[] args) {
-        ParkingLot parkingLotObj = new ParkingLot(10);
+        String input = JOptionPane.showInputDialog(null, "Введите количество мест на парковке (по умолчанию 10):", "Количество мест", JOptionPane.QUESTION_MESSAGE);
+        int defaultCapacity = 10;
+
+        int tempCapacity;
+
+        try {
+            tempCapacity = (input == null || input.isEmpty()) ? defaultCapacity : Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.err.println("Ошибка при вводе количества мест. Установлено значение по умолчанию: " + defaultCapacity);
+            tempCapacity = defaultCapacity;
+        }
+
+        ParkingLot parkingLotObj = new ParkingLot(tempCapacity);
         ParkingGUI parkingGUI = new ParkingGUI(parkingLotObj);
     }
+
+
+
 }
