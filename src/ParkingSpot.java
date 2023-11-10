@@ -1,10 +1,10 @@
-class ParkingSpot {
-    private final int spotNumber;
+public class ParkingSpot {
+    private int spotNumber;
     private String reservedCarLicensePlate;
+    private boolean reservedForDisabled;
 
     public ParkingSpot(int spotNumber) {
         this.spotNumber = spotNumber;
-        this.reservedCarLicensePlate = null;
     }
 
     public int getSpotNumber() {
@@ -15,28 +15,23 @@ class ParkingSpot {
         return reservedCarLicensePlate;
     }
 
-    public void reserve(String carLicensePlate) {
-        this.reservedCarLicensePlate = carLicensePlate;
-    }
-
-    public void unreserve() {
-        this.reservedCarLicensePlate = null;
-    }
-
-    public boolean isOccupied() {
-        return reservedCarLicensePlate != null;
-    }
-
     public boolean isReserved() {
         return reservedCarLicensePlate != null;
     }
 
-    public Car getCar() {
-        return null;
+    public void reserve(String carLicensePlate) {
+        reservedCarLicensePlate = carLicensePlate;
     }
 
-    public boolean getOccupyingCar() {
-        return false;
+    public void unreserve() {
+        reservedCarLicensePlate = null;
+    }
+
+    public void setReservedForDisabled(boolean reservedForDisabled) {
+        this.reservedForDisabled = reservedForDisabled;
+    }
+
+    public boolean isReservedForDisabled() {
+        return reservedForDisabled;
     }
 }
-

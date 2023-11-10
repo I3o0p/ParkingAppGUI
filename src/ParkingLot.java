@@ -13,6 +13,7 @@ public class ParkingLot {
 
     private ParkingSpot[] spots;
 
+
     public ParkingLot(int capacity) {
         this.capacity = capacity;
         this.cars = new ArrayList<>();
@@ -20,9 +21,20 @@ public class ParkingLot {
         this.reservedSpots = new ArrayList<>();
         this.spots = new ParkingSpot[capacity];
 
+        initializeParkingSpots();
+    }
+
+    private void initializeParkingSpots() {
         for (int i = 1; i <= capacity; i++) {
-            availableSpots.add(new ParkingSpot(i));
-            spots[i - 1] = availableSpots.get(i - 1);
+            ParkingSpot spot = new ParkingSpot(i);
+            availableSpots.add(spot);
+            spots[i - 1] = spot;
+
+            // Reserve 7% of spots for disabled people
+            if (i <= Math.ceil(0.1 * capacity)) {
+                spot.setReservedForDisabled(true);
+                reservedSpots.add(spot);
+            }
         }
     }
 
@@ -33,10 +45,7 @@ public class ParkingLot {
         this.cars.clear();
         this.spots = new ParkingSpot[capacity];
 
-        for (int i = 1; i <= capacity; i++) {
-            availableSpots.add(new ParkingSpot(i));
-            spots[i - 1] = availableSpots.get(i - 1);
-        }
+        initializeParkingSpots();
     }
 
     public int getAvailableSpots() {
@@ -51,8 +60,8 @@ public class ParkingLot {
         return totalRevenue;
     }
 
-    public int getReservedSpots() {
-        return reservedSpots.size();
+    public List<ParkingSpot> getReservedSpots() {
+        return reservedSpots;
     }
 
     public Car findCarByLicensePlate(String licensePlate) {
@@ -168,11 +177,7 @@ public class ParkingLot {
         availableSpots.clear();
         reservedSpots.clear();
 
-        for (int i = 1; i <= capacity; i++) {
-            ParkingSpot spot = new ParkingSpot(i);
-            availableSpots.add(spot);
-            spots[i - 1] = spot;
-        }
+        initializeParkingSpots();
 
         totalCarsParked = 0;
         totalRevenue = 0.0;
@@ -222,4 +227,5 @@ public class ParkingLot {
         }
         return null;
     }
+
 }

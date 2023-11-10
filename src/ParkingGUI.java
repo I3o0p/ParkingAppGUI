@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
 import javax.imageio.ImageIO;
 
 public class ParkingGUI extends JFrame {
@@ -280,7 +281,7 @@ public class ParkingGUI extends JFrame {
     }
 
     private void handleStatusButtonClick() {
-        int reservedSpots = parkingLot.getReservedSpots();
+        List<ParkingSpot> reservedSpots = parkingLot.getReservedSpots();
         int totalOccupiedSpots = parkingLot.getTotalCarsParked();
 
         String statusMessage = "Состояние парковки:\n";
