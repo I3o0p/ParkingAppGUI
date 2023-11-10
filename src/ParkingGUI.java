@@ -53,6 +53,7 @@ public class ParkingGUI extends JFrame {
         ImageIcon statusIcon = resizeIcon("src/Images/status.png", 30, 30);
         ImageIcon resetIcon = resizeIcon("src/Images/reset.png", 30, 30);
         ImageIcon exitIcon = resizeIcon("src/Images/logout.png", 30, 30);
+        ImageIcon parkview = resizeIcon("src/Images/parkview.png", 30, 30);
         // Create buttons with icons
         JButton parkButton = createStyledButton("Припарковать автомобиль", parkIcon, defaultButtonColor, hoverButtonColor);
         JButton leaveButton = createStyledButton("Покинуть парковку", leaveIcon, defaultButtonColor, hoverButtonColor);
@@ -62,6 +63,8 @@ public class ParkingGUI extends JFrame {
         JButton statusButton = createStyledButton("Показать состояние парковки", statusIcon, defaultButtonColor, hoverButtonColor);
         JButton resetButton = createStyledButton("Обнулить парковку", resetIcon, defaultButtonColor, hoverButtonColor);
         JButton exitButton = createStyledButton("Выйти", exitIcon, defaultButtonColor, hoverButtonColor);
+        JButton parkNowButton = createStyledButton("Парковка сейчас", parkview, defaultButtonColor, hoverButtonColor);
+
 
 // Add buttons to panel
         JPanel buttonPanel = new JPanel();
@@ -85,18 +88,18 @@ public class ParkingGUI extends JFrame {
         buttonPanel.add(resetButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
         buttonPanel.add(exitButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
+        buttonPanel.add(parkNowButton);
 
         add(buttonPanel, BorderLayout.WEST);
 
-
-
-
-// Create output text area
+        // Create output text area
         outputTextArea = new JTextArea();
         outputTextArea.setEditable(false);
         outputTextArea.setBackground(Color.decode("#1b1b1b"));
         outputTextArea.setForeground(Color.WHITE);
-        outputTextArea.setBorder(BorderFactory.createEmptyBorder()); // Remove the border
+        outputTextArea.setBorder(BorderFactory.createEmptyBorder());
+
 
         JScrollPane scrollPane = new JScrollPane(outputTextArea);
         scrollPane.getVerticalScrollBar().setBackground(Color.decode("#1b1b1b")); // Set the background color of the vertical scrollbar
@@ -115,6 +118,7 @@ public class ParkingGUI extends JFrame {
         JPanel messagePanel = new JPanel(new BorderLayout());
         messagePanel.setBackground(Color.decode("#1b1b1b"));
         messagePanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        messagePanel.add(new JLabel("Сообщения:"), BorderLayout.NORTH);
 
         messagePanel.add(outputPanel, BorderLayout.CENTER);
         add(messagePanel, BorderLayout.CENTER);
@@ -176,6 +180,15 @@ public class ParkingGUI extends JFrame {
             }
         });
 
+        parkNowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openParkingManager();
+            }
+        });
+
+
+
         setVisible(true);
 
         getRootPane().setBackground(new Color(27, 27, 27));
@@ -184,7 +197,9 @@ public class ParkingGUI extends JFrame {
 
     private ImageIcon resizeIcon(String filePath, int width, int height) {
         try {
-            BufferedImage image = ImageIO.read(new File(filePath));
+            // Use absolute file path
+            File imageFile = new File(filePath);
+            BufferedImage image = ImageIO.read(imageFile);
             Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             return new ImageIcon(resizedImage);
         } catch (IOException e) {
@@ -192,6 +207,7 @@ public class ParkingGUI extends JFrame {
             return null;
         }
     }
+
 
     private JButton createStyledButton(String text, Icon icon, Color defaultColor, Color hoverColor) {
         JButton button = new JButton(text);
@@ -309,8 +325,12 @@ public class ParkingGUI extends JFrame {
         appendToOutput("Ошибка: " + message);
     }
 
+    private void openParkingManager() {
+        ParkingManager parkingManager = new ParkingManager(parkingLot);
+    }
+
     public static void main(String[] args) {
-        ParkingLot parkingLot = new ParkingLot(10);
-        new ParkingGUI(parkingLot);
+        ParkingLot parkingLotObj = new ParkingLot(10);
+        ParkingGUI parkingGUI = new ParkingGUI(parkingLotObj);
     }
 }

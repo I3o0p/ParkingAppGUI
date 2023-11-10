@@ -3,22 +3,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ParkingLot {
-    private List<Car> cars;
-    private List<ParkingSpot> availableSpots;
-    private int capacity;
+    private final List<Car> cars;
+    private final List<ParkingSpot> availableSpots;
+    private final int capacity;
     private int totalCarsParked;
     private double totalRevenue;
-    private List<ParkingSpot> reservedSpots;
+    private final List<ParkingSpot> reservedSpots;
     private static final int MAX_WAIT_TIME_SECONDS = 300; // Максимальное время ожидания для бронирования (в секундах)
-    private double hourlyRate = 5.0; // Тариф за час
+
+    private final ParkingSpot[] spots;  // Array to represent parking spots
 
     public ParkingLot(int capacity) {
         this.capacity = capacity;
         this.cars = new ArrayList<>();
         this.availableSpots = new ArrayList<>();
         this.reservedSpots = new ArrayList<>();
+        this.spots = new ParkingSpot[capacity];  // Initialize the spots array with the specified number of spots
+
         for (int i = 1; i <= capacity; i++) {
             availableSpots.add(new ParkingSpot(i));
+            spots[i - 1] = availableSpots.get(i - 1);
         }
     }
 
@@ -69,15 +73,17 @@ class ParkingLot {
         return null;
     }
 
-    public boolean removeCar(String licensePlate) {
+    public void removeCar(String licensePlate) {
         Car car = findCarByLicensePlate(licensePlate);
         if (car == null) {
             System.out.println("Автомобиль с номером " + licensePlate + " не найден на парковке.");
-            return false;
+            return;
         }
 
         car.exitTime = System.currentTimeMillis() / 1000.0;
-        car.calculateParkingFee(hourlyRate);
+        // Тариф за час
+        double hourlyRate = 5.0;
+        car.calculateParkingFee();
         car.getParkingSpot().unreserve();
         availableSpots.add(car.getParkingSpot());
         cars.remove(car);
@@ -86,7 +92,6 @@ class ParkingLot {
         System.out.println("Продолжительность парковки: " + df.format(car.getExitTime() - car.getEntryTime()) + " секунд.");
         System.out.println("Сумма оплаты: " + df.format(car.getParkingFee()) + " грн.");
         totalRevenue += car.getParkingFee();
-        return true;
     }
 
     public boolean reserveParkingSpot(String carLicensePlate) {
@@ -111,16 +116,6 @@ class ParkingLot {
         }
 
         return false;
-    }
-
-
-    // Добавьте метод для отмены бронирования мест, которые не были заняты автомобилем
-    public void removeUnoccupiedReservations() {
-        for (ParkingSpot spot : reservedSpots) {
-            if (spot.getReservedCarLicensePlate() == null) {
-                reservedSpots.remove(spot);
-            }
-        }
     }
 
     public void showAvailableSpots() {
@@ -162,13 +157,20 @@ class ParkingLot {
         cars.clear();
         availableSpots.clear();
         reservedSpots.clear();
+
+        // Recreate spots and add them to available spots
         for (int i = 1; i <= capacity; i++) {
-            availableSpots.add(new ParkingSpot(i));
+            ParkingSpot spot = new ParkingSpot(i);
+            availableSpots.add(spot);
+            spots[i - 1] = spot;
         }
+
         totalCarsParked = 0;
         totalRevenue = 0.0;
         System.out.println("Парковка успешно обнулена.");
     }
+
+
 
     public ParkingSpot getParkingSpotByNumber(int i) {
         if (i >= 0 && i < availableSpots.size()) {
@@ -177,7 +179,50 @@ class ParkingLot {
         return null;
     }
 
+
+
+
     public int getCapacity() {
         return capacity;
     }
+
+    public List<ParkingSpot> getParkingSpots() {
+        return null;
+    }
+
+    public boolean isSpotOccupied(int spotNumber) {
+        for (Car car : cars) {
+            ParkingSpot parkingSpot = car.getParkingSpot();
+            if (parkingSpot != null && parkingSpot.getSpotNumber() == spotNumber + 1) {
+                return true; // Если место занято, вернуть true
+            }
+        }
+        return false; // В противном случае вернуть false
+    }
+
+
+
+
+    public Car getCarBySpot(int spotNumber) {
+        for (Car car : cars) {
+            ParkingSpot parkingSpot = car.getParkingSpot();
+            if (parkingSpot != null && parkingSpot.getSpotNumber() == spotNumber + 1) {
+                return car; // Возвращаем машину, если она припаркована на этом месте
+            }
+        }
+        return null; // Возвращаем null, если машина не найдена на данном месте
+    }
+
+    public String isSpotReserved(int spotNumber) {
+        for (ParkingSpot spot : reservedSpots) {
+            if (spot.getSpotNumber() == spotNumber + 1) {
+                return spot.getReservedCarLicensePlate();
+            }
+        }
+        return null;
+    }
+
+
+
+
 }

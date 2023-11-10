@@ -1,7 +1,5 @@
-import java.text.DecimalFormat;
-
 class ParkingSpot {
-    private int spotNumber;
+    private final int spotNumber;
     private String reservedCarLicensePlate;
 
     public ParkingSpot(int spotNumber) {
@@ -31,6 +29,14 @@ class ParkingSpot {
 
     public boolean isReserved() {
         return reservedCarLicensePlate != null;
+    }
+
+    public Car getCar() {
+        return null;
+    }
+
+    public boolean getOccupyingCar() {
+        return false;
     }
 }
 

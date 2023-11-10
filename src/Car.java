@@ -1,6 +1,6 @@
 class Car {
-    private String licensePlate;
-    private double entryTime;
+    private final String licensePlate;
+    private final double entryTime;
     double exitTime;
     private ParkingSpot parkingSpot;
     private double parkingFee;
@@ -35,7 +35,7 @@ class Car {
         return parkingFee;
     }
 
-    public void calculateParkingFee(double hourlyRate) {
+    public void calculateParkingFee() {
         double parkingDuration = exitTime - entryTime;
         parkingFee = parkingDuration / 30.0; // 30 секунд = 1 грн
     }
